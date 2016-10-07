@@ -20,19 +20,19 @@ class Stemmer {
   def add(w: String) = word = w
 
 
-  def getNumConsonantSequences(s: String): Int = {
-    def consonantSequencesIter(index: Int, currentConst: Boolean): Int = {
-      if (index > s.length-1) 0
-      else {
-        if (isConsonant(index) && !currentConst && index != 0) {
-            1 + consonantSequencesIter(index + 1, currentConst = true)
-        }
-        else {
-            0 + consonantSequencesIter(index + 1, currentConst = false)
-        }
+  def getNumConsSeqs(s: String): Int = {
+    def consSeqsIter(i: Int, prevConsonant: Boolean): Int = {
+      if (i > s.length-1) 0
+      else if (isConsonant(i)) {
+        if (!prevConsonant && i != 0)
+          1 + consSeqsIter(i + 1, prevConsonant = true)
+        else
+          0 + consSeqsIter(i + 1, prevConsonant = true)
       }
+      else
+        0 + consSeqsIter(i + 1, prevConsonant = false)
     }
-    consonantSequencesIter(index = 0, currentConst = false)
+    consSeqsIter(i = 0, prevConsonant = false)
   }
 
 
@@ -55,7 +55,7 @@ class Stemmer {
   def wasReplaced(orig: String, replace: String, checker: Int => Boolean): Boolean = {
     if (word endsWith orig) {
       val n = word.substring(0, word.length - orig.length)
-      val m = getNumConsonantSequences(n)
+      val m = getNumConsSeqs(n)
       if (checker(m)) {
         word = n + replace
       }
@@ -78,7 +78,7 @@ class Stemmer {
 
 
   def step1() = {
-    var m = getNumConsonantSequences(word)
+    var m = getNumConsSeqs(word)
 
     // step 1a
     var vals = List(
@@ -99,7 +99,7 @@ class Stemmer {
         )
 
         if (!processSubList(vals, _ >= 0)) {
-          m = getNumConsonantSequences(word)
+          m = getNumConsSeqs(word)
           val last = word(word.length - 1)
           if (isDoubleConsonant && !("lsz" contains last)) {
             word = word.substring(0, word.length - 1)
@@ -163,7 +163,7 @@ class Stemmer {
 
   def step4() = {
 
-    // setp4a
+    // step4a
     val vals = List(
       ("al", ""),
       ("ance", ""),
@@ -177,7 +177,6 @@ class Stemmer {
       ("ment", ""),
       ("ent", "")
     )
-
     var res = processSubList(vals, _ > 1)
 
     // step4b
@@ -215,7 +214,7 @@ class Stemmer {
 
 
   def step5b() = {
-    val m = getNumConsonantSequences(word)
+    val m = getNumConsSeqs(word)
     if (m > 1 && isDoubleConsonant && word.endsWith("l")) {
       word = word.substring(0, word.length - 1)
     }
