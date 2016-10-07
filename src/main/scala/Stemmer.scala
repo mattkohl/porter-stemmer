@@ -8,16 +8,16 @@ import scala.io.Source
 class Stemmer {
 
   // word to be stemmed.
-  var word = ""
+  var b = ""
   val vowels = "aeiou"
 
-  def isVowel(i: Int): Boolean = (vowels contains word(i)) || (i > 0 && word(i) == 'y' && isVowel(i-1))
+  def isVowel(i: Int): Boolean = (vowels contains b(i)) || (i > 0 && b(i) == 'y' && isVowel(i-1))
 
   def isConsonant(i: Int): Boolean = !isVowel(i)
 
 
-  def add(ch: Char) = word += ch
-  def add(w: String) = word = w
+  def add(ch: Char) = b += ch
+  def add(w: String) = b = w
 
 
   def getNumConsSeqs(s: String): Int = {
@@ -36,28 +36,28 @@ class Stemmer {
   }
 
 
-  def isVowelInStem(s: String): Boolean = 0 until (word.length - s.length) exists isVowel
+  def isVowelInStem(s: String): Boolean = 0 until (b.length - s.length) exists isVowel
 
 
   def isDoubleConsonant: Boolean = {
-    val l = word.length - 1
-    isConsonant(l) && (l >= 1) && (word(l) == word(l - 1))
+    val l = b.length - 1
+    isConsonant(l) && (l >= 1) && (b(l) == b(l - 1))
   }
 
 
   def isConsonantVowelConsonant(s: String): Boolean = {
-    val i = word.length - 1 - s.length
-    val ch = word(i)
+    val i = b.length - 1 - s.length
+    val ch = b(i)
     (i > 1) && isConsonant(i) && isVowel(i-1) && isConsonant(i-2) && !("wxy" contains ch)
   }
 
 
   def wasReplaced(orig: String, replace: String, checker: Int => Boolean): Boolean = {
-    if (word endsWith orig) {
-      val n = word.substring(0, word.length - orig.length)
+    if (b endsWith orig) {
+      val n = b.substring(0, b.length - orig.length)
       val m = getNumConsSeqs(n)
       if (checker(m)) {
-        word = n + replace
+        b = n + replace
       }
       return true
     }
@@ -78,7 +78,7 @@ class Stemmer {
 
 
   def step1() = {
-    var m = getNumConsSeqs(word)
+    var m = getNumConsSeqs(b)
 
     // step 1a
     var vals = List(
@@ -99,13 +99,13 @@ class Stemmer {
         )
 
         if (!processSubList(vals, _ >= 0)) {
-          m = getNumConsSeqs(word)
-          val last = word(word.length - 1)
+          m = getNumConsSeqs(b)
+          val last = b(b.length - 1)
           if (isDoubleConsonant && !("lsz" contains last)) {
-            word = word.substring(0, word.length - 1)
+            b = b.substring(0, b.length - 1)
           }
           if (m == 1 && isConsonantVowelConsonant("")) {
-            word += "e"
+            b = b + "e"
           }
         }
       }
@@ -181,8 +181,8 @@ class Stemmer {
 
     // step4b
     if (!res) {
-      if (word.length > 4) {
-        if (word(word.length - 4) == 's' || word(word.length - 4) == 't') {
+      if (b.length > 4) {
+        if (b(b.length - 4) == 's' || b(b.length - 4) == 't') {
           res = wasReplaced("ion", "", _ > 1)
         }
       }
@@ -214,9 +214,9 @@ class Stemmer {
 
 
   def step5b() = {
-    val m = getNumConsSeqs(word)
-    if (m > 1 && isDoubleConsonant && word.endsWith("l")) {
-      word = word.substring(0, word.length - 1)
+    val m = getNumConsSeqs(b)
+    if (m > 1 && isDoubleConsonant && b.endsWith("l")) {
+      b = b.substring(0, b.length - 1)
     }
   }
 }
@@ -232,7 +232,7 @@ object runIt {
       val l = line.trim()
       stemmer.add(l)
 
-      if (stemmer.word.length > 2) {
+      if (stemmer.b.length > 2) {
         stemmer.step1()
         stemmer.step2()
         stemmer.step3()
@@ -241,7 +241,7 @@ object runIt {
         stemmer.step5b()
       }
 
-      println(stemmer.word)
+      println(stemmer.b)
     }
   }
 }
