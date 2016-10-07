@@ -1,0 +1,49 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @mattkohl
+ Unwatch 1
+  Star 0
+  Fork 0 mattkohl/progFun
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Pulse  Graphs  Settings
+Branch: master Find file Copy pathprogFun/.gitignore
+906a8c2  on Aug 24
+@mattkohl mattkohl defined a few more methods
+1 contributor
+RawBlameHistory
+35 lines (30 sloc)  487 Bytes
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+out
+gen### Scala template
+*.class
+*.log
+
+# sbt specific
+.cache
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
+project/project/
+src/main/java/
+src/main/scala-2.11/
+src/test/java/
+src/test/scala-2.11/
+Contact GitHub API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Status Help
