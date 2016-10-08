@@ -36,12 +36,12 @@ class Stemmer {
   }
 
 
-  def isVowelInStem(s: String): Boolean = 0 until (b.length - s.length) exists isVowel
+  def isVowelInStem(suffix: String): Boolean = 0 until (b.length - suffix.length) exists isVowel
 
 
   def isDoubleConsonant: Boolean = {
-    val l = b.length - 1
-    isConsonant(l) && (l >= 1) && (b(l) == b(l - 1))
+    val bLength = b.length - 1
+    isConsonant(bLength) && (bLength >= 1) && (b(bLength) == b(bLength - 1))
   }
 
 
@@ -80,45 +80,42 @@ class Stemmer {
   def step1() = {
     var m = getNumConsSeqs(b)
 
-    // step 1a
-    var vals = List(
+    var subs = List(
       ("sses", "ss"),
       ("ies", "i"),
       ("ss", "ss"),
       ("s", "")
     )
-    processSubList(vals, _ >= 0)
+    processSubList(subs, _ >= 0)
 
-    // step 1b
     if (!wasReplaced("eed", "ee", _ > 0)) {
       if ((isVowelInStem("ed") && wasReplaced("ed", "", _ >= 0)) || (isVowelInStem("ing") && wasReplaced("ing", "", _ >= 0))) {
-        vals = List(
+        subs = List(
           ("at", "ate"),
           ("bl", "ble"),
           ("iz", "ize")
         )
 
-        if (!processSubList(vals, _ >= 0)) {
+        if (!processSubList(subs, _ >= 0)) {
           m = getNumConsSeqs(b)
           val last = b(b.length - 1)
           if (isDoubleConsonant && !("lsz" contains last)) {
             b = b.substring(0, b.length - 1)
           }
-          if (m == 1 && isConsonantVowelConsonant("")) {
+          else if (m == 1 && isConsonantVowelConsonant("")) {
             b = b + "e"
           }
         }
       }
     }
 
-    // step 1c
     isVowelInStem("y") && wasReplaced("y", "i", _ >= 0)
   }
 
 
   def step2() = {
 
-    val vals = List(
+    val subs = List(
       ("ational", "ate"),
       ("tional", "tion"),
       ("enci", "ence"),
@@ -141,13 +138,13 @@ class Stemmer {
       ("biliti", "ble"),
       ("logi", "log")
     )
-    processSubList(vals, _ > 0)
+    processSubList(subs, _ > 0)
   }
 
 
   def step3() = {
 
-    val vals = List(
+    val subs = List(
       ("icate", "ic"),
       ("ative", ""),
       ("alize", "al"),
@@ -156,15 +153,14 @@ class Stemmer {
       ("ful", ""),
       ("ness", "")
     )
-    processSubList(vals, _ > 0)
+    processSubList(subs, _ > 0)
 
   }
 
 
   def step4() = {
 
-    // step4a
-    val vals = List(
+    val subs = List(
       ("al", ""),
       ("ance", ""),
       ("ence", ""),
@@ -177,20 +173,18 @@ class Stemmer {
       ("ment", ""),
       ("ent", "")
     )
-    var res = processSubList(vals, _ > 1)
+    var result = processSubList(subs, _ > 1)
 
-    // step4b
-    if (!res) {
+    if (!result) {
       if (b.length > 4) {
         if (b(b.length - 4) == 's' || b(b.length - 4) == 't') {
-          res = wasReplaced("ion", "", _ > 1)
+          result = wasReplaced("ion", "", _ > 1)
         }
       }
     }
 
-    // step4c
-    if (!res) {
-      val vals = List(
+    if (!result) {
+      val subs = List(
         ("ou", ""),
         ("ism", ""),
         ("ate", ""),
@@ -199,7 +193,7 @@ class Stemmer {
         ("ive", ""),
         ("ize", "")
       )
-      processSubList(vals, _ > 1)
+      processSubList(subs, _ > 1)
     }
   }
 
@@ -229,8 +223,8 @@ object runIt {
     val stemmer = new Stemmer()
 
     for (line <- source.getLines) {
-      val l = line.trim()
-      stemmer.add(l)
+      val trimmed = line.trim()
+      stemmer.add(trimmed)
 
       if (stemmer.b.length > 2) {
         stemmer.step1()
