@@ -11,7 +11,7 @@ class Stemmer {
   var b = ""
   val vowels = "aeiou"
 
-  def isVowel(i: Int): Boolean = (vowels contains b(i)) || (i > 0 && b(i) == 'y' && isVowel(i-1))
+  def isVowel(i: Int): Boolean = (vowels contains b(i)) || (i > 0 && b(i) == 'y' && !isVowel(i-1))
 
   def isConsonant(i: Int): Boolean = !isVowel(i)
 
