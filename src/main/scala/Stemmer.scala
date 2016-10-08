@@ -52,12 +52,12 @@ class Stemmer {
   }
 
 
-  def wasReplaced(orig: String, replace: String, checker: Int => Boolean): Boolean = {
-    if (b endsWith orig) {
-      val n = b.substring(0, b.length - orig.length)
-      val m = getNumConsSeqs(n)
-      if (checker(m)) {
-        b = n + replace
+  def wasReplaced(suffix: String, substitution: String, checker: Int => Boolean): Boolean = {
+    if (b endsWith suffix) {
+      val stem = b.substring(0, b.length - suffix.length)
+      val numConsonantSeqs = getNumConsSeqs(stem)
+      if (checker(numConsonantSeqs)) {
+        b = stem + substitution
       }
       return true
     }

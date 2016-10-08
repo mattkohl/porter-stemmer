@@ -1,8 +1,8 @@
 import org.scalatest.FunSuite
-
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+
+import scala.io.Source
 
 
 @RunWith(classOf[JUnitRunner])
@@ -11,6 +11,20 @@ class TestStemmer extends FunSuite {
   test("stemmer.b should be 'banning'") {
     val stemmer = new Stemmer()
     stemmer.add("banning")
+    assert(stemmer.b === "banning")
+  }
+
+  test("Add a new word") {
+    val stemmer = new Stemmer()
+    stemmer.add("test")
+    stemmer.add("banning")
+    assert(stemmer.b === "banning")
+  }
+
+  test("Add a character") {
+    val stemmer = new Stemmer()
+    stemmer.add("bannin")
+    stemmer.add('g')
     assert(stemmer.b === "banning")
   }
 
@@ -69,5 +83,27 @@ class TestStemmer extends FunSuite {
     assert(stemmer.b === "ban")
   }
 
+  test("Vocabulary test") {
+    val vocabulary = Source.fromURL(getClass.getResource("/vocabulary.txt"))
+    val stemmed = Source.fromURL(getClass.getResource("/stemmed.txt"))
+    val stemmer = new Stemmer()
+
+    val pairs = vocabulary.getLines zip stemmed.getLines
+
+    for (pair <- pairs) {
+      val trimmed = pair._1.trim()
+      stemmer.add(trimmed)
+
+      if (stemmer.b.length > 2) {
+        stemmer.step1()
+        stemmer.step2()
+        stemmer.step3()
+        stemmer.step4()
+        stemmer.step5a()
+        stemmer.step5b()
+      }
+      assert(stemmer.b === pair._2)
+    }
+  }
 
 }
