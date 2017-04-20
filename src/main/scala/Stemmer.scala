@@ -11,13 +11,12 @@ class Stemmer {
   var b = ""
   val vowels = "aeiou"
 
-  def isVowel(i: Int): Boolean = (vowels contains b(i)) || (i > 0 && b(i) == 'y' && !isVowel(i-1))
 
+  def isVowel(i: Int): Boolean = (vowels contains b(i)) || (i > 0 && b(i) == 'y' && !isVowel(i-1))
   def isConsonant(i: Int): Boolean = !isVowel(i)
 
-
-  def add(ch: Char) = b += ch
-  def add(w: String) = b = w
+  def add(ch: Char): Unit = b += ch
+  def add(w: String): Unit = b = w
 
 
   def getNumConsSeqs(s: String): Int = {
@@ -77,7 +76,7 @@ class Stemmer {
   }
 
 
-  def step1() = {
+  def step1(): Unit = {
     var m = getNumConsSeqs(b)
 
     var subs = List(
@@ -113,7 +112,7 @@ class Stemmer {
   }
 
 
-  def step2() = {
+  def step2(): Unit = {
 
     val subs = List(
       ("ational", "ate"),
@@ -142,7 +141,7 @@ class Stemmer {
   }
 
 
-  def step3() = {
+  def step3(): Unit = {
 
     val subs = List(
       ("icate", "ic"),
@@ -154,11 +153,10 @@ class Stemmer {
       ("ness", "")
     )
     processSubList(subs, _ > 0)
-
   }
 
 
-  def step4() = {
+  def step4(): Unit = {
 
     val subs = List(
       ("al", ""),
@@ -198,7 +196,7 @@ class Stemmer {
   }
 
 
-  def step5a() = {
+  def step5a(): Unit = {
     wasReplaced("e", "", _ > 1)
 
     if (!isConsonantVowelConsonant("e")) {
@@ -207,7 +205,7 @@ class Stemmer {
   }
 
 
-  def step5b() = {
+  def step5b(): Unit = {
     val m = getNumConsSeqs(b)
     if (m > 1 && isDoubleConsonant && b.endsWith("l")) {
       b = b.substring(0, b.length - 1)
@@ -217,7 +215,7 @@ class Stemmer {
 
 
 object runIt {
-  def main(args: Array[String]) = {
+  def main(args: Array[String]): Unit = {
 
     val source = Source.fromURL(getClass.getResource("/vocabulary.txt"))
     val stemmer = new Stemmer()
